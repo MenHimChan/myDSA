@@ -1,0 +1,27 @@
+// 编译Array文件夹中的程序
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "g++ - Build and debug program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Array/program",  // 可执行文件路径
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Array",            // 工作目录设为 Array
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "C/C++: g++ build all files", // 必须与 tasks.json 的 label 匹配
+      "miDebuggerPath": "/usr/bin/gdb"
+    }
+  ]
+}

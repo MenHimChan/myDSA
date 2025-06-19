@@ -1,0 +1,118 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "cppbuild",
+      "label": "Matrix: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Matrix",
+        "${workspaceFolder}/Matrix/ADT.cpp",
+        "${workspaceFolder}/Matrix/main.cpp",
+        "-o",
+        "${workspaceFolder}/Matrix/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Matrix"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Build Matrix program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Array: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Array",
+        "${workspaceFolder}/Array/ADT.cpp",
+        "${workspaceFolder}/Array/main.cpp",
+        "-o",
+        "${workspaceFolder}/Array/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Array"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Build Array program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "LinkList: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/LinkList",
+        "${workspaceFolder}/LinkList/ADT.cpp",
+        "${workspaceFolder}/LinkList/main.cpp",
+        "-o",
+        "${workspaceFolder}/LinkList/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/LinkList"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Build LinkList program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Stack: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Stack",
+        "${workspaceFolder}/Stack/ADT.cpp",
+        "${workspaceFolder}/Stack/main.cpp",
+        "-o",
+        "${workspaceFolder}/Stack/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Stack"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": "build",
+      "detail": "Build Stack program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Queue: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Queue",
+        "${workspaceFolder}/Queue/ADT.cpp",
+        "${workspaceFolder}/Queue/main.cpp",
+        "-o",
+        "${workspaceFolder}/Queue/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Queue"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Build Queue program"
+    }
+  ]
+}

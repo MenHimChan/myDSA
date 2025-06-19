@@ -1,0 +1,110 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Matrix Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Matrix/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Matrix",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Matrix: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+      "name": "Debug Array Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Array/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Array",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Array: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+      "name": "Debug LinkList Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/LinkList/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/LinkList",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "LinkList: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+      "name": "Debug Stack Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Stack/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Stack",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Stack: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+      "name": "Debug Queue Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Queue/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Queue",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Queue: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    }
+  ]
+}
