@@ -184,16 +184,16 @@ int main()
     // lkls.PrintHeadPtr();
 
     // FindMid() test
-    LinkedList<int> lkls;
-    cin >> lkls;
-    lkls.Display();
-    auto node = lkls.FindMid();
-    if(node) {
-        cout << "MidNode -> data : " << node->data << endl;
-        cout << "MidNode -> next : " << node->next << endl;
-    }
-    else
-        cout << "MidNode is nullptr ! " << endl; 
+    // LinkedList<int> lkls;
+    // cin >> lkls;
+    // lkls.Display();
+    // auto node = lkls.FindMid();
+    // if(node) {
+    //     cout << "MidNode -> data : " << node->data << endl;
+    //     cout << "MidNode -> next : " << node->next << endl;
+    // }
+    // else
+    //     cout << "MidNode is nullptr ! " << endl; 
 
 
     //////////////////////////////////////////////////////// DoublyLinkedList //////////////////////////////////////////////////
@@ -251,8 +251,6 @@ int main()
     // dll.InsertCircular(0, 10000);
     // dll.Display();
     // dll.PrintHeadptr();
-
-
 
     return 0;
 }

@@ -38,6 +38,7 @@ class LinkedList
         friend std::istream& operator>> <>(std::istream& is, LinkedList<T>& ll);      // Input methed: the first is the length of the linkedlist, following is elems
         friend LinkedList<T> operator+ <>(const LinkedList<T>& a, const LinkedList<T>& b);        // concat a and b
         void PrintHeadPtr() const {cout << "Head addr is : " << head << endl;}        // Print the head pointer
+        Node* GetHead() {return head;}
         void PrintSize() const {cout << "LinkedList size is : " << size << endl;}     // Print the size
         void Create(int size);
         void toLoop(int index);                                                       // Create a loop linkedlist by setting: last->next = index node
@@ -73,7 +74,6 @@ class LinkedList
         // @example: index = 1, x = 1000 <=> insert 1000 before the node index 1, index 0 means the head node
         void InsertCircular(int index, T x);       
         void DeleteCircular(int index);             
-        
 };
 
 template <class T>

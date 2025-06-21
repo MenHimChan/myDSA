@@ -146,35 +146,48 @@ int main() {
     // return 0;
 
     ///////////////////////////////////////// Evaluation of Postfix ////////////////////////////////////////
-    char in[100];
-    cin.getline(in, 100);
-    // cout << in;
-    LinklistStack<int> stack;
-    for(int i = 0; in[i] != '\0'; i++) {
-        if(isdigit(in[i])) {
-            int num = 0;
-            while(isdigit(in[i])) {
-                num = num * 10 + (in[i] - '0');
-                i++;
-            }
-            stack.push(num);
-        }
-        else if(in[i] == ' ') continue;
-        else {
-            int x,y,MidAns;
-            stack.pop(x);
-            stack.pop(y);
-            switch(in[i]) {
-                case '+': MidAns = y + x; break;
-                case '-': MidAns = y - x; break;
-                case '*': MidAns = y * x; break;
-                case '/': MidAns = y / x; break;
-            }
-            stack.push(MidAns);
-        }
-    }
-    cout << stack.peek(0) << endl;
+    // char in[100];
+    // cin.getline(in, 100);
+    // // cout << in;
+    // LinklistStack<int> stack;
+    // for(int i = 0; in[i] != '\0'; i++) {
+    //     if(isdigit(in[i])) {
+    //         int num = 0;
+    //         while(isdigit(in[i])) {
+    //             num = num * 10 + (in[i] - '0');
+    //             i++;
+    //         }
+    //         stack.push(num);
+    //     }
+    //     else if(in[i] == ' ') continue;
+    //     else {
+    //         int x,y,MidAns;
+    //         stack.pop(x);
+    //         stack.pop(y);
+    //         switch(in[i]) {
+    //             case '+': MidAns = y + x; break;
+    //             case '-': MidAns = y - x; break;
+    //             case '*': MidAns = y * x; break;
+    //             case '/': MidAns = y / x; break;
+    //         }
+    //         stack.push(MidAns);
+    //     }
+    // }
+    // cout << stack.peek(0) << endl;
 
+    ///////////////////////////////////////// Queue Implementation using 2 stacks ////////////////////////////////////////
+    StackQueue<int> stackqueue;
+    int tmp;
+    stackqueue.Enqueue(1000);
+    stackqueue.Enqueue(25252);
+    stackqueue.Enqueue(123512);
+    stackqueue.Dequeue(tmp);
+    stackqueue.Dequeue(tmp);
+    stackqueue.Enqueue(1019);
+    stackqueue.Enqueue(7987);
+    stackqueue.Dequeue(tmp);
+
+    stackqueue.Display();
 
 
     return 0;

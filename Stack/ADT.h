@@ -252,4 +252,49 @@ T LinklistStack<T>::peek(int pos) {
     return -1;
 }
 
+template <class T>
+class StackQueue {
+private:
+    LinklistStack<T> inStack;
+    LinklistStack<T> outStack;
+public:
+    void Enqueue(T x) {inStack.push(x);}
+    bool Dequeue(T& x) {
+        if(isEmpty())           // two stacks are all empty
+            return false;
+        else if(inStack.isEmpty() == false && outStack.isEmpty() == true) {         // instack has elements while outstack is empty
+            T tmp;
+            while(!inStack.isEmpty()) {
+                inStack.pop(tmp);
+                outStack.push(tmp);
+            }
+            outStack.pop(x);
+            return true;
+        }
+        else if(inStack.isEmpty() == true && outStack.isEmpty() == true) {          // two stacks are all not empty
+            outStack.pop(x);
+            return true;
+        }
+        else if(inStack.isEmpty() == true && outStack.isEmpty() == false){          // instack is empty while outstack is not empty
+            outStack.pop(x);
+            return true;
+        }
+        // If none of the above, return false as a fallback
+        return false;
+    }
+    
+    void Display() {
+        int inSize = inStack.GetSize();
+        int outSize = outStack.GetSize();
+        cout << "[FRONT] : ";
+        for(int i = 0; i <= outSize - 1; i++)
+            cout << outStack.peek(i) << ' ';
+        for(int i = inSize - 1; i >= 0; i--) 
+            cout << inStack.peek(i) << ' ';
+        cout << ": [REAR]" << endl;
+    }
+    bool isEmpty() { return (inStack.isEmpty() && outStack.isEmpty()); }
+};
+
+
 #endif
