@@ -186,7 +186,6 @@ int main() {
     stackqueue.Enqueue(1019);
     stackqueue.Enqueue(7987);
     stackqueue.Dequeue(tmp);
-
     stackqueue.Display();
 
 

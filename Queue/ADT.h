@@ -182,7 +182,29 @@ class LinkedListQueue {
         bool Enqueue(T x);
         bool Dequeue(T& x);
         void Display();
+        int TotalElems() const;
+        T GetAt(int pos) const;
 };
+
+template <class T>
+int LinkedListQueue<T>::TotalElems() const {
+    int ret = 0;
+    for(Node *p = front; p != nullptr; p=p->next)
+        ret++;
+    return ret;
+}
+
+template <class T>
+T LinkedListQueue<T>::GetAt(int pos) const {
+    if(pos >= 0 && pos <= TotalElems() - 1) {
+        Node* p = front;
+        while(pos--) p=p->next;
+        return p->data;
+    }
+    else
+        cout << "Invalid `pos` input ! " << endl;
+        return -100000;
+}
 
 template <class T>
 LinkedListQueue<T>::LinkedListQueue() {

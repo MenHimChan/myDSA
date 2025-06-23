@@ -86,10 +86,7 @@
       "problemMatcher": [
         "$gcc"
       ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
+      "group": "build",
       "detail": "Build Stack program"
     },
     {
@@ -113,6 +110,31 @@
       ],
       "group": "build",
       "detail": "Build Queue program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Trees: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Trees",
+        "${workspaceFolder}/Trees/ADT.cpp",
+        "${workspaceFolder}/Trees/main.cpp",
+        "-o",
+        "${workspaceFolder}/Trees/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Trees"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "detail": "Build Trees program"
     }
   ]
 }

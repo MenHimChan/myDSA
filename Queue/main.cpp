@@ -56,5 +56,8 @@ int main() {
     fifo.Enqueue(123512);
     fifo.Enqueue(11412);
     fifo.Display();
+    cout << "fifo.TotalElems() : " << fifo.TotalElems() << endl;
+    cout << "fifo.GetAt(3) : "<< fifo.GetAt(3) << endl;
+    
     return 0;
 }

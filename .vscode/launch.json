@@ -105,6 +105,27 @@
       ],
       "preLaunchTask": "Queue: g++ build all files",
       "miDebuggerPath": "/usr/bin/gdb"
+    },
+    {
+      "name": "Debug Trees Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Trees/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Trees",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Trees: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
     }
   ]
 }
