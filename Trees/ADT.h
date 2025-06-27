@@ -25,18 +25,28 @@ private:
     void PrintPreOrder_stk(TreeNode* node);
     void PrintInOrder_stk(TreeNode* node);
     void PrintPostOrder_stk(TreeNode* node);
+    int RTotalNodes(TreeNode* node);
+    int RTotalDeg2Nodes(TreeNode* node);
+    T RSum(TreeNode* node);
+    int maxDepth(TreeNode* node);
 
 public:
     BinaryTree() : root(nullptr) {}
     ~BinaryTree() {destory(root);}
-    void Create(T root_val);
-    void PrintPreOrder() {PrintPreOrder(this->root);}
-    void PrintInOrder() {PrintInOrder(this->root);}
-    void PrintPostOrder() {PrintPostOrder(this->root);}
-    void PrintPreOrder_stk() {PrintPreOrder_stk(this->root);}
-    void PrintInOrder_stk() {PrintInOrder_stk(this->root);}
-    void PrintPostOrder_stk() {PrintPostOrder_stk(this->root);}
-    void PrintLevelOrder();
+    void Create(T root_val);                                    // 层序创建
+    int RTotalNodes() {return RTotalNodes(this->root);}         // 递归求总节点数
+    int RTotalDeg2Nodes() {return RTotalDeg2Nodes(this->root);} // 递归法求度为2的节点
+    int maxDepth() {return maxDepth(this->root);}               // 递归法求二叉树最大深度
+    int ITotalNodes();                                          // 迭代求总节点数，层序法
+    T RSum() {return RSum(this->root);}                         // 递归求整棵树总和
+    void PrintPreOrder() {PrintPreOrder(this->root);}           // 递归前序遍历
+    void PrintInOrder() {PrintInOrder(this->root);}             // 递归中序遍历
+    void PrintPostOrder() {PrintPostOrder(this->root);}         // 递归后序遍历
+    void PrintPreOrder_stk() {PrintPreOrder_stk(this->root);}   // 迭代后序遍历
+    void PrintInOrder_stk() {PrintInOrder_stk(this->root);}     // 迭代中序遍历
+    void PrintPostOrder_stk() {PrintPostOrder_stk(this->root);} // 迭代后序遍历
+    void PrintLevelOrder();                                     // 层序遍历
+    
 };
 
 template <class T>
@@ -78,11 +88,10 @@ void BinaryTree<T>::Create(T root_val) {
 
 template <class T>
 void BinaryTree<T>::PrintPreOrder(TreeNode* node) {
-    if(node != nullptr) {
-        cout << node->data << " ";
-        PrintPreOrder(node->lchild);
-        PrintPreOrder(node->rchild);
-    }
+    if(node == nullptr) return;
+    cout << node->data << ' ';
+    PrintPreOrder(node->lchild);
+    PrintPreOrder(node->rchild);
 }
 
 template <class T>
@@ -179,5 +188,226 @@ void BinaryTree<T>::PrintLevelOrder() {
     cout << endl;
 }
 
+// 迭代层序遍历获得总节点数
+template <class T>
+int BinaryTree<T>::ITotalNodes() {
+    queue<TreeNode*> fifo;
+    int cnt = 0;
+    fifo.push(this->root);
+    while (!fifo.empty()) {                 // 只要没有空队，就持续循环
+        TreeNode* node = fifo.front();      // 访问一个节点
+        cnt++;
+        if(node->lchild != nullptr) 
+            fifo.push(node->rchild);
+        if(node->rchild != nullptr)
+            fifo.push(node->rchild);
+        fifo.pop();
+    }
+    return cnt;
+}
+
+// 实际上是后续遍历
+template <class T>
+int BinaryTree<T>::RTotalNodes(TreeNode* node) {
+    if(node == nullptr) return 0;
+    int x = RTotalNodes(node->lchild);
+    int y = RTotalNodes(node->rchild);
+    return x+y+1;                       // 左节点总和 + 右节点总和 + 本节点(1)
+}
+
+template <class T>
+T BinaryTree<T>::RSum(TreeNode* node) {
+    if(node == nullptr) return 0;
+    T sum_l = RSum(node->lchild);
+    T sum_r = RSum(node->rchild);
+    return sum_l + sum_r + node->data;
+}
+
+// 将判断条件改成 node->lchild == nullptr && node->rchild == nullptr 就是求叶子节点个数
+template <class T>
+int BinaryTree<T>::RTotalDeg2Nodes(TreeNode* node) {
+    if(node == nullptr) return 0;
+    int x = RTotalDeg2Nodes(node->lchild);
+    int y = RTotalDeg2Nodes(node->rchild);
+    if(node->lchild != nullptr && node->rchild != nullptr)
+        return x + y + 1;
+    else
+        return x + y;
+}
+
+template <class T>
+int BinaryTree<T>::maxDepth(TreeNode* node) {
+    if(node == nullptr) return 0;
+    int x = maxDepth(node->lchild);
+    int y = maxDepth(node->rchild);
+    if(x > 1)
+        return x + 1;
+    else    
+        return y + 1;
+}
+
+template <class T>
+class BinarySearchTree {
+private:
+    struct TreeNode {
+        TreeNode* lc;
+        T data;
+        TreeNode* rc;
+    };
+    TreeNode* root;
+    void destroy(TreeNode* node);
+    void PrintPreorder(TreeNode* node);
+    void PrintInorder(TreeNode* node);
+public:
+    BinarySearchTree() : root(nullptr) {}
+    ~BinarySearchTree() {destroy(this->root);}
+    void PrintPreorder() {PrintPreorder(this->root);}
+    void PrintInorder() {PrintInorder(this->root);}
+    TreeNode* Search(T key);
+    T GetRootValue() {return root->data;}
+    void Insert(T key);
+    void Create();
+    void Delete(T key);
+};
+
+template <class T>
+void BinarySearchTree<T>::destroy(TreeNode* node) {
+    if(node != nullptr) {
+        destroy(node->lc);
+        destroy(node->rc);
+        delete node;
+    }
+}
+
+template <class T>
+void BinarySearchTree<T>::Insert(T key) {
+    TreeNode* curr = this->root;
+    TreeNode* prev = nullptr;
+    TreeNode* newnode = nullptr;
+    while(curr != nullptr) {
+        if(curr->data == key)           // 不重复插入元素
+            return;             
+        else if(curr->data > key) {
+            prev = curr;
+            curr = curr->lc;
+        }
+        else {
+            prev = curr;
+            curr = curr->rc;
+        }
+    }
+    newnode = new TreeNode{nullptr, key, nullptr};
+    if(prev == nullptr) 
+        this->root = newnode;
+    else if(key > prev->data) 
+        prev->rc = newnode;
+    else
+        prev->lc = newnode;
+}
+
+template <class T>
+void BinarySearchTree<T>::Create() {
+    T x;
+    cout << "Input the elements you wants, first one is the root value, enter `-1` to exit : ";
+    cin >> x;
+    while(x != -1) {
+        Insert(x);
+        cin >> x;
+    }
+}
+
+template <class T>
+void BinarySearchTree<T>::PrintPreorder(TreeNode* node) {
+    if(node == nullptr) return;
+    cout << node->data << ' ';
+    PrintPreorder(node->lc);
+    PrintPreorder(node->rc);
+}
+
+template <class T>
+void BinarySearchTree<T>::PrintInorder(TreeNode* node) {
+    if(node == nullptr) return;
+    PrintInorder(node->lc);
+    cout << node->data << ' ';
+    PrintInorder(node->rc);
+}
+
+template <class T>
+typename BinarySearchTree<T>::TreeNode* BinarySearchTree<T>::Search(T key) {
+    TreeNode* curr = this->root;
+    while(curr != nullptr) {
+        if(curr->data == key)
+            return curr;
+        else if(curr->data > key) 
+            curr = curr->lc;
+        else
+            curr = curr->rc;            
+    }
+    return nullptr;
+}
+
+template <class T>
+void BinarySearchTree<T>::Delete(T key) {
+    TreeNode* curr = root, *prev = nullptr;
+    while(curr != nullptr) {
+        if(curr->data == key) 
+            break;
+        else if(curr->data > key) {
+            prev = curr;
+            curr = curr->lc;
+        }
+        else {
+            prev = curr;
+            curr = curr->rc;
+        }
+    }
+    if(curr == nullptr) return;             // 查找失败
+
+    // Delete Leaf node
+    if(curr->lc == nullptr && curr->rc == nullptr) {
+        if(prev->lc == curr)
+            prev->lc = nullptr;        
+        else 
+            prev->rc = nullptr;
+        delete curr;
+    }
+
+    // Delete Deg(node) = 1 Node
+    else if((curr->lc != nullptr && curr->rc == nullptr) || 
+            (curr->lc == nullptr && curr->rc != nullptr)) {
+        // the only child of curr is left child
+        if(curr->lc != nullptr) {
+            if(prev->rc == curr)
+                prev->rc = curr->lc;
+            else
+                prev->lc = curr->lc;
+            delete curr;
+        }
+        // the only child of curr is right child
+        else {
+            if(prev->rc == curr)
+                prev->rc = curr->rc;
+            else
+                prev->lc = curr->rc;
+        }
+    }
+    // Delete Deg(node) = 2 Node
+    else {
+        // 找前驱
+        TreeNode* p = curr->lc;
+        TreeNode* pPrev = curr;         // 转移到左子树
+        while(p->rc != nullptr) {       // 转移到左子树的最右边节点，也就是左子树最大值
+            pPrev = p;
+            p = p->rc;
+        }
+        curr->data = p->data;           // 用前驱值覆盖
+        // 删除前驱节点p（p最多只有左孩子）
+        if(pPrev->rc == p)
+            pPrev->rc = p->lc;
+        else
+            pPrev->lc = p->lc;
+        delete p;
+    }
+}
 
 #endif
