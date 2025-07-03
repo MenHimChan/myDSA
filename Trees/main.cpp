@@ -90,13 +90,13 @@ int main() {
     
     // Delete() test
     // Delete root node
-    BinarySearchTree<int> bst;
-    bst.Create();
-    bst.PrintInorder();
-    bst.Delete(9);
-    cout << endl;
-    cout << "GetRootValue() is : " << bst.GetRootValue() << endl; 
-    bst.PrintInorder();
+    // BinarySearchTree<int> bst;
+    // bst.Create();
+    // bst.PrintInorder();
+    // bst.Delete(9);
+    // cout << endl;
+    // cout << "GetRootValue() is : " << bst.GetRootValue() << endl; 
+    // bst.PrintInorder();
 
     // delete leaf node
     // BinarySearchTree<int> bst;
@@ -105,5 +105,13 @@ int main() {
     // cout << endl;
     // bst.Delete(5);
     // bst.PrintInorder();
+
+    // recursive insert test : RInert()
+    BinarySearchTree<int> bst;
+    bst.Create();
+    bst.PrintInorder();
+    cout << endl;
+    bst.RInsert(15);
+    bst.PrintInorder();
     return 0;
 }

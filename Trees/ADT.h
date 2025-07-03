@@ -258,6 +258,7 @@ private:
     void destroy(TreeNode* node);
     void PrintPreorder(TreeNode* node);
     void PrintInorder(TreeNode* node);
+    TreeNode* RInsert(TreeNode* node, T key);
 public:
     BinarySearchTree() : root(nullptr) {}
     ~BinarySearchTree() {destroy(this->root);}
@@ -266,6 +267,7 @@ public:
     TreeNode* Search(T key);
     T GetRootValue() {return root->data;}
     void Insert(T key);
+    void RInsert(T key) {this->root = RInsert(this->root, key);}
     void Create();
     void Delete(T key);
 };
@@ -303,6 +305,21 @@ void BinarySearchTree<T>::Insert(T key) {
         prev->rc = newnode;
     else
         prev->lc = newnode;
+}
+
+template <class T>
+typename BinarySearchTree<T>::TreeNode* BinarySearchTree<T>::RInsert(TreeNode* node, T key) {
+    if(node == nullptr) {
+        // 新建节点
+        node = new TreeNode{nullptr, key, nullptr};
+        return node;
+    }
+    if(key < node->data)
+        node->lc = RInsert(node->lc, key);
+    else if(key > node->data)
+        node->rc = RInsert(node->rc, key);
+    // 如果key等于node->data，不插入重复节点
+    return node;
 }
 
 template <class T>
@@ -409,5 +426,165 @@ void BinarySearchTree<T>::Delete(T key) {
         delete p;
     }
 }
+
+template <class T>
+class AVL {
+private:
+    struct AVLNode {
+        AVLNode* lc;
+        T data;
+        AVLNode* rc;
+        int height;
+    };
+    AVLNode* root;
+    void destory(AVLNode* node);
+    int Getheight(AVLNode* node) {return node ? node->height : -1;}
+    int BalanceFactor(AVLNode* node);
+    AVLNode* RInsert(AVLNode* node, T key);
+    void LLRotation(AVLNode*& node);
+    void RRRotation(AVLNode*& node);
+    void LRRotation(AVLNode*& node);
+    void RLRotation(AVLNode*& node);
+public:
+    AVL();
+    ~AVL();
+    void RInsert(T key) {RInsert(root, key);}
+
+};
+
+// RL Rotation
+//         A <- node                     C
+//        / \                         /     \  
+//      Al   B      ==>             A       B
+//          / \                    / \     /  \  
+//        C   Br                  Al  Cl  Cr  Br
+//       / \
+//     Cl  Cr
+template <class T>
+void AVL<T>::RLRotation(AVLNode*& node) {
+    LLRotation(node->rc); // 先对node->rc做LL旋转
+    RRRotation(node);     // 再对node做RR旋转
+}
+
+// LR Rotation
+//         A <- node                     C
+//        / \                         /     \  
+//       B   Ar      ==>             B       A
+//      / \                         / \     /  \  
+//    Bl   C                       Bl  Cl  Cr   Ar
+//        / \
+//       Cl  Cr
+template <class T>
+void AVL<T>::LRRotation(AVLNode*& node) {
+    RRRotation(node->lc); // 先对node->lc做RR旋转
+    LLRotation(node);     // 再对node做LL旋转
+}
+
+// RR Rotation
+// A B Bl needs to be operator
+//         A <- node                     B
+//        / \                         /     \  
+//      Al   B                       A       C
+//          / \        ==>          /  \    / \  
+//        Bl   C                   Al  Bl  Cl  Cr
+//            / \
+//           Cl  Cr
+template <class T>
+void AVL<T>::RRRotation(AVLNode*& node) {
+    AVLNode* B = node->rc;
+    AVLNode* Bl = B->lc;
+    // perform rotation
+    B->lc = node;               // A(node)成为B的左子节点
+    node->rc = Bl;              // B的左子节点成为A(node)的右子节点
+    // renew height
+    node->height = max(Getheight(node->rc), Getheight(node->lc)) + 1;
+    B->height = max(Getheight(B->rc), Getheight(B->lc)) + 1;
+    // let B become root
+    node = B;
+}
+
+// LL Rotation
+//         A <- node                     B
+//        / \                         /    \  
+//       B   Ar                      C       A
+//      / \         ==>             / \     / \  
+//     C   Br                      Cl  Cr  Br  Ar
+//    / \
+//   Cl  Cr
+template <class T>
+void AVL<T>::LLRotation(AVLNode*& node) {
+    AVLNode* B = node->lc;
+    AVLNode* Br = B->rc;
+    // rotation
+    B->rc = node;                  // A(node)成为B的右子节点
+    node->lc = Br;              // B的右子节点成为A的左子节点
+    // renew height
+    node->height = max(Getheight(node->lc), Getheight(node->rc)) + 1;
+    B->height = max(Getheight(B->lc), Getheight(B->rc)) + 1;
+    // Let B become new root
+    node = B;
+}
+
+// 插入一个节点之后，检查根节点的bf，如果失衡，则根据对应类型旋转树。
+template <class T>
+typename AVL<T>::AVLNode* AVL<T>::RInsert(AVLNode* node, T key) {
+    // 标准BST插入
+    if(node == nullptr) {
+        node = new AVLNode{nullptr, key, nullptr};
+        return node;
+    }
+    if(key > node->data)
+        node->rc = RInsert(node->rc, key);
+    else if(key < node->data)
+        node->lc = RInsert(node->lc, key);
+    else
+        return node;
+    
+    // renew height of root
+    node->height = std::max(Getheight(node->lc), Getheight(node->rc)) + 1;
+    
+    // LL Rotation
+    if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) >= 0) 
+        LLRotation(node);
+    // LR Rotation
+    else if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) < 0) 
+        LRRotation(node);
+    // RR Rotation
+    else if(BalanceFactor(node) == -2 && BalanceFactor(node->rc) <= 0)
+        RRRotation(node);
+    // RL Rotation
+    else if(BalanceFactor(node) == -2 && BalanceFactor(node->rc) > 0) 
+        RLRotation(node);
+    
+    return node;
+}
+
+// berf: 计算传入节点的平衡因子
+// bf: 空节点：   return 0
+//     叶子节点： return 0
+template <class T>
+int AVL<T>::BalanceFactor(AVLNode* node) {
+    return node ? Getheight(node->lc) - Getheight(node->rc) : 0;
+}
+
+template <class T>
+void AVL<T>::destory(AVLNode* node) {
+    if(node) {
+        destory(node->lc);
+        destory(node->rc);
+        delete node;
+    }
+}
+
+template <class T>
+AVL<T>::AVL() {
+    this->root = nullptr;
+}
+
+template <class T>
+AVL<T>::~AVL() {
+    destroy(this->root);
+}
+
 
 #endif
