@@ -438,19 +438,39 @@ private:
     };
     AVLNode* root;
     void destory(AVLNode* node);
-    int Getheight(AVLNode* node) {return node ? node->height : -1;}
     int BalanceFactor(AVLNode* node);
     AVLNode* RInsert(AVLNode* node, T key);
     void LLRotation(AVLNode*& node);
     void RRRotation(AVLNode*& node);
     void LRRotation(AVLNode*& node);
     void RLRotation(AVLNode*& node);
+    void PrintInorder(AVLNode* node);
 public:
     AVL();
     ~AVL();
-    void RInsert(T key) {RInsert(root, key);}
-
+    void RInsert(T key) {this->root = RInsert(root, key);}
+    void Create();
+    void PrintInorder() {PrintInorder(this->root);}
+    void PrintRootAddr() {cout << "root addr is : " << this->root << endl;}
+    int GetHeight(AVLNode* node);
+    int GetAVLHeight() {return GetHeight(this->root);}
 };
+
+template <class T>
+int AVL<T>::GetHeight(AVLNode* node) {
+    if(node == nullptr) return -1;
+    return max(GetHeight(node->rc), GetHeight(node->lc)) + 1;
+}
+ 
+template <class T>
+void AVL<T>::PrintInorder(AVLNode* node) {
+    if(node == nullptr) {
+        return;
+    }
+    PrintInorder(node->lc);
+    cout << node->data << ' ';
+    PrintInorder(node->rc);
+}
 
 // RL Rotation
 //         A <- node                     C
@@ -497,8 +517,8 @@ void AVL<T>::RRRotation(AVLNode*& node) {
     B->lc = node;               // A(node)成为B的左子节点
     node->rc = Bl;              // B的左子节点成为A(node)的右子节点
     // renew height
-    node->height = max(Getheight(node->rc), Getheight(node->lc)) + 1;
-    B->height = max(Getheight(B->rc), Getheight(B->lc)) + 1;
+    node->height = max(GetHeight(node->rc), GetHeight(node->lc)) + 1;
+    B->height = max(GetHeight(B->rc), GetHeight(B->lc)) + 1;
     // let B become root
     node = B;
 }
@@ -519,8 +539,8 @@ void AVL<T>::LLRotation(AVLNode*& node) {
     B->rc = node;                  // A(node)成为B的右子节点
     node->lc = Br;              // B的右子节点成为A的左子节点
     // renew height
-    node->height = max(Getheight(node->lc), Getheight(node->rc)) + 1;
-    B->height = max(Getheight(B->lc), Getheight(B->rc)) + 1;
+    node->height = max(GetHeight(node->lc), GetHeight(node->rc)) + 1;
+    B->height = max(GetHeight(B->lc), GetHeight(B->rc)) + 1;
     // Let B become new root
     node = B;
 }
@@ -530,21 +550,21 @@ template <class T>
 typename AVL<T>::AVLNode* AVL<T>::RInsert(AVLNode* node, T key) {
     // 标准BST插入
     if(node == nullptr) {
-        node = new AVLNode{nullptr, key, nullptr};
+        node = new AVLNode{nullptr, key, nullptr, 0};
         return node;
     }
     if(key > node->data)
         node->rc = RInsert(node->rc, key);
     else if(key < node->data)
         node->lc = RInsert(node->lc, key);
-    else
+    else                                    // 重复值，不进行插入
         return node;
     
     // renew height of root
-    node->height = std::max(Getheight(node->lc), Getheight(node->rc)) + 1;
+    node->height = GetHeight(node);
     
     // LL Rotation
-    if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) >= 0) 
+    if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) >= 0)
         LLRotation(node);
     // LR Rotation
     else if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) < 0) 
@@ -564,7 +584,7 @@ typename AVL<T>::AVLNode* AVL<T>::RInsert(AVLNode* node, T key) {
 //     叶子节点： return 0
 template <class T>
 int AVL<T>::BalanceFactor(AVLNode* node) {
-    return node ? Getheight(node->lc) - Getheight(node->rc) : 0;
+    return node ? GetHeight(node->lc) - GetHeight(node->rc) : 0;
 }
 
 template <class T>
@@ -583,7 +603,18 @@ AVL<T>::AVL() {
 
 template <class T>
 AVL<T>::~AVL() {
-    destroy(this->root);
+    destory(this->root);
+}
+
+template <class T>
+void AVL<T>::Create() {
+    T x;
+    cout << "Input the elements you want to insert into the AVL tree, enter `-1` to exit: ";
+    cin >> x;
+    while(x != -1) {
+        RInsert(x); // 调用插入函数
+        cin >> x;
+    }
 }
 
 

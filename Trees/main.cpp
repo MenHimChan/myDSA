@@ -107,11 +107,32 @@ int main() {
     // bst.PrintInorder();
 
     // recursive insert test : RInert()
-    BinarySearchTree<int> bst;
-    bst.Create();
-    bst.PrintInorder();
+    // BinarySearchTree<int> bst;
+    // bst.Create();
+    // bst.PrintInorder();
+    // cout << endl;
+    // bst.RInsert(15);
+    // bst.PrintInorder();
+    // return 0;
+
+    // ======================== AVL Tree ==========================
+    // Create() test 
+    // test case: 1 2 3 4 5 -1  ==> 1 2 3 4 5 (LL)
+    //            5 4 3 2 1 -1  ==> 1 2 3 4 5 (RR)
+    //             30 20 25 -1  ==> 20 25 30 (LR)
+    //    10 20 30 40 50 25 -1  ==> 10 20 25 30 40 50
+    // AVL<int> avl;
+    // avl.Create();
+    // avl.PrintRootAddr();
+    // avl.PrintInorder();
+
+    // GetAVLHeight() test
+    AVL<int> avl;
+    avl.Create();
+    avl.PrintInorder();
     cout << endl;
-    bst.RInsert(15);
-    bst.PrintInorder();
+    cout << avl.GetAVLHeight();
+
+
     return 0;
 }
