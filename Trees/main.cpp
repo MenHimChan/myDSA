@@ -115,6 +115,18 @@ int main() {
     // bst.PrintInorder();
     // return 0;
 
+    // recursive Delete test : RDelete()
+    BinarySearchTree<int> bst;
+    bst.Create();
+    bst.PrintInorder();
+    cout << endl;
+    bst.RInsert(15);
+    bst.PrintInorder();
+    // bst.PrintRootAddr();
+    bst.RDelete(15);
+    // bst.PrintRootAddr();
+    bst.PrintInorder();
+
     // ======================== AVL Tree ==========================
     // Create() test 
     // test case: 1 2 3 4 5 -1  ==> 1 2 3 4 5 (LL)
@@ -123,16 +135,17 @@ int main() {
     //    10 20 30 40 50 25 -1  ==> 10 20 25 30 40 50
     // AVL<int> avl;
     // avl.Create();
-    // avl.PrintRootAddr();
+    // // avl.PrintRootAddr();
     // avl.PrintInorder();
+    // cout << endl;
+    // cout << avl.GetRootBF();        // 根节点的平衡因子始终都 <= |1|,说明该树就是AVL树  
 
     // GetAVLHeight() test
-    AVL<int> avl;
-    avl.Create();
-    avl.PrintInorder();
-    cout << endl;
-    cout << avl.GetAVLHeight();
-
+    // AVL<int> avl;
+    // avl.Create();
+    // avl.PrintInorder();      
+    // cout << endl;
+    // cout << avl.GetAVLHeight();
 
     return 0;
 }

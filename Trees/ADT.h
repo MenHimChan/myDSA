@@ -259,18 +259,66 @@ private:
     void PrintPreorder(TreeNode* node);
     void PrintInorder(TreeNode* node);
     TreeNode* RInsert(TreeNode* node, T key);
+    TreeNode* RDelete(TreeNode* node, T key);
 public:
     BinarySearchTree() : root(nullptr) {}
     ~BinarySearchTree() {destroy(this->root);}
     void PrintPreorder() {PrintPreorder(this->root);}
     void PrintInorder() {PrintInorder(this->root);}
+    void PrintRootAddr() {cout << "Root Addr is : " << this->root << endl;}
     TreeNode* Search(T key);
     T GetRootValue() {return root->data;}
     void Insert(T key);
     void RInsert(T key) {this->root = RInsert(this->root, key);}
     void Create();
     void Delete(T key);
+    void RDelete(T key) {this->root = RDelete(this->root, key);}
 };
+
+template <class T>
+typename BinarySearchTree<T>::TreeNode* BinarySearchTree<T>::RDelete(TreeNode* node, T key) {
+    if(node == nullptr) return nullptr;
+    if(key < node->data)                        // key < node
+        node->lc = RDelete(node->lc, key);
+    else if(key > node->data)                   // key > node
+        node->rc = RDelete(node->rc, key);
+    else {                                      // key = node
+        // leaf node is to be deleted
+        if(node->rc == nullptr && node->lc == nullptr) {
+            delete node;
+            return nullptr;
+        }
+        // deg(node) = 1 is to be deleted
+        else if( (node->rc == nullptr && node->lc != nullptr) || 
+                 (node->rc != nullptr && node->lc == nullptr)    ) {
+                    if(node->rc == nullptr && node->lc != nullptr) {        // 只有左节点
+                        TreeNode* tmp = node->lc;
+                        delete node;
+                        return tmp;
+                    }
+                    else {                                                  // 只有右节点
+                        TreeNode* tmp = node->rc;
+                        delete node;
+                        return tmp;
+                    }
+                }
+        // deg(node) = 2 is to be deleted
+        // 找到待删节点的左子树的最大值，即左子树最右侧节点代替待删节点的值，再删掉左子树最大值节点
+        else {                                                              // 删除度为2节点
+            TreeNode* curr = node->lc;
+            TreeNode* prev;
+            while(curr != nullptr) {
+                prev = curr;
+                curr = curr->rc;
+            }
+            node->data = prev->data;
+            node->lc = RDelete(node->lc, prev->data);       // 该节点可能会有左子树
+            return node;
+        }
+    }
+    return node;                                            // 将当前节点返还上一层
+}
+
 
 template <class T>
 void BinarySearchTree<T>::destroy(TreeNode* node) {
@@ -454,6 +502,7 @@ public:
     void PrintRootAddr() {cout << "root addr is : " << this->root << endl;}
     int GetHeight(AVLNode* node);
     int GetAVLHeight() {return GetHeight(this->root);}
+    int GetRootBF() {return BalanceFactor(this->root);}     // Get Root node balanced factor
 };
 
 template <class T>
@@ -461,7 +510,7 @@ int AVL<T>::GetHeight(AVLNode* node) {
     if(node == nullptr) return -1;
     return max(GetHeight(node->rc), GetHeight(node->lc)) + 1;
 }
- 
+
 template <class T>
 void AVL<T>::PrintInorder(AVLNode* node) {
     if(node == nullptr) {
@@ -517,8 +566,8 @@ void AVL<T>::RRRotation(AVLNode*& node) {
     B->lc = node;               // A(node)成为B的左子节点
     node->rc = Bl;              // B的左子节点成为A(node)的右子节点
     // renew height
-    node->height = max(GetHeight(node->rc), GetHeight(node->lc)) + 1;
-    B->height = max(GetHeight(B->rc), GetHeight(B->lc)) + 1;
+    node->height = GetHeight(node);
+    B->height = GetHeight(node);
     // let B become root
     node = B;
 }
@@ -539,8 +588,8 @@ void AVL<T>::LLRotation(AVLNode*& node) {
     B->rc = node;                  // A(node)成为B的右子节点
     node->lc = Br;              // B的右子节点成为A的左子节点
     // renew height
-    node->height = max(GetHeight(node->lc), GetHeight(node->rc)) + 1;
-    B->height = max(GetHeight(B->lc), GetHeight(B->rc)) + 1;
+    node->height = GetHeight(node);
+    B->height = GetHeight(B);
     // Let B become new root
     node = B;
 }
@@ -564,13 +613,13 @@ typename AVL<T>::AVLNode* AVL<T>::RInsert(AVLNode* node, T key) {
     node->height = GetHeight(node);
     
     // LL Rotation
-    if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) >= 0)
+    if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) >= 0) 
         LLRotation(node);
     // LR Rotation
     else if(BalanceFactor(node) == 2 && BalanceFactor(node->lc) < 0) 
         LRRotation(node);
     // RR Rotation
-    else if(BalanceFactor(node) == -2 && BalanceFactor(node->rc) <= 0)
+    else if(BalanceFactor(node) == -2 && BalanceFactor(node->rc) <= 0) 
         RRRotation(node);
     // RL Rotation
     else if(BalanceFactor(node) == -2 && BalanceFactor(node->rc) > 0) 
