@@ -277,7 +277,7 @@ public:
 
 template <class T>
 typename BinarySearchTree<T>::TreeNode* BinarySearchTree<T>::RDelete(TreeNode* node, T key) {
-    if(node == nullptr) return nullptr;
+    if(node == nullptr) return nullptr;         // 没查找到这个元素
     if(key < node->data)                        // key < node
         node->lc = RDelete(node->lc, key);
     else if(key > node->data)                   // key > node
