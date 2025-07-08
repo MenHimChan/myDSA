@@ -116,23 +116,24 @@ int main() {
     // return 0;
 
     // recursive Delete test : RDelete()
-    BinarySearchTree<int> bst;
-    bst.Create();
-    bst.PrintInorder();
-    cout << endl;
-    bst.RInsert(15);
-    bst.PrintInorder();
-    // bst.PrintRootAddr();
-    bst.RDelete(15);
-    // bst.PrintRootAddr();
-    bst.PrintInorder();
+    // BinarySearchTree<int> bst;
+    // bst.Create();
+    // bst.PrintInorder();
+    // cout << endl;
+    // bst.RInsert(15);
+    // bst.PrintInorder();
+    // bst.RDelete(15);
+    // bst.PrintInorder();
 
     // ======================== AVL Tree ==========================
-    // Create() test 
     // test case: 1 2 3 4 5 -1  ==> 1 2 3 4 5 (LL)
     //            5 4 3 2 1 -1  ==> 1 2 3 4 5 (RR)
     //             30 20 25 -1  ==> 20 25 30 (LR)
-    //    10 20 30 40 50 25 -1  ==> 10 20 25 30 40 50
+    //             20 30 25 -1  ==> 20 25 30 (RL)
+    //    10 20 30 40 50 25 -1  ==> 10 20 25 30 40 50 (混合)
+    //    50 20 70 10 30 60 80 25 5 15 65 85 1 12 13 -1 ==> 1 5 10 12 13 15 20 25 30 50 60 65 70 80 85 (混合)
+    //    10 20 30 40 50 25 -1 ==> 
+    // Create() test 
     // AVL<int> avl;
     // avl.Create();
     // // avl.PrintRootAddr();
@@ -147,5 +148,16 @@ int main() {
     // cout << endl;
     // cout << avl.GetAVLHeight();
 
+    // RDelete() test
+    AVL<int> avl;
+    avl.Create();
+    avl.PrintInorder();
+    cout << "avl.GetRootBF() = " << avl.GetRootBF() << endl;
+    avl.RInsert(100);
+    avl.PrintInorder();
+    cout << "avl.GetRootBF() = " << avl.GetRootBF() << endl;
+    avl.RDelete(100);
+    avl.PrintInorder();
+    cout << "avl.GetRootBF() = " << avl.GetRootBF() << endl;
     return 0;
 }

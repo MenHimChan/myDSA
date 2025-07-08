@@ -312,7 +312,7 @@ typename BinarySearchTree<T>::TreeNode* BinarySearchTree<T>::RDelete(TreeNode* n
                 curr = curr->rc;
             }
             node->data = prev->data;
-            node->lc = RDelete(node->lc, prev->data);       // 该节点可能会有左子树
+            node->lc = RDelete(node->lc, prev->data);       // 删去左子树中的最大值
             return node;
         }
     }
@@ -488,6 +488,7 @@ private:
     void destory(AVLNode* node);
     int BalanceFactor(AVLNode* node);
     AVLNode* RInsert(AVLNode* node, T key);
+    AVLNode* RDelete(AVLNode* node, T key);
     void LLRotation(AVLNode*& node);
     void RRRotation(AVLNode*& node);
     void LRRotation(AVLNode*& node);
@@ -496,14 +497,74 @@ private:
 public:
     AVL();
     ~AVL();
+    void RDelete(T key) {this->root = RDelete(this->root, key);}
     void RInsert(T key) {this->root = RInsert(root, key);}
     void Create();
-    void PrintInorder() {PrintInorder(this->root);}
+    void PrintInorder() {PrintInorder(this->root); cout << endl;}
     void PrintRootAddr() {cout << "root addr is : " << this->root << endl;}
     int GetHeight(AVLNode* node);
     int GetAVLHeight() {return GetHeight(this->root);}
     int GetRootBF() {return BalanceFactor(this->root);}     // Get Root node balanced factor
 };
+
+template <class T>
+typename AVL<T>::AVLNode* AVL<T>::RDelete(AVLNode* node, T key) {
+    // 标准BST递归删除
+    if(node == nullptr) return nullptr;
+    if(key > node->data) 
+        node->rc = RDelete(node->rc, key);
+    else if(key < node->data)
+        node->lc = RDelete(node->lc, key);
+    else {
+        // Match key is a leaf node
+        if(node->rc == nullptr && node->lc == nullptr) {
+            delete node;
+            return nullptr;         // 返回空指针给上层函数接收
+        }
+        // match key has single child
+        else if( (node->rc == nullptr && node->lc != nullptr) ||
+                 (node->rc != nullptr && node->lc == nullptr) ) {
+                    if(node->rc != nullptr) {                   // has only right child
+                        AVLNode* tmp = node->rc;
+                        delete node;
+                        return tmp;
+                    }
+                    else {
+                        AVLNode* tmp = node->lc;
+                        delete node;
+                        return tmp;
+                    }
+                }
+        // match key has 2 child
+        // search for it's left tree max value or it's right tree min value
+        else{
+            AVLNode* curr = node->lc;
+            AVLNode* prev;
+            while(curr != nullptr) {
+                prev = curr;
+                curr = curr->rc;
+            }
+            node->data = prev->data;
+            node->lc = RDelete(node->lc, prev->data);       // delete max value in the left tree
+            return node;
+        }
+    }
+    node->height = GetHeight(node);
+    int bf = BalanceFactor(node);
+    // LL Rotation
+    if(bf == 2 && BalanceFactor(node->lc) >= 0)
+        RRRotation(node);
+    // LR Rotation
+    else if(bf == 2 && BalanceFactor(node->lc) < 0)
+        LRRotation(node);
+    // RR Rotation
+    else if(bf == -2 && BalanceFactor(node->rc) <= 0)
+        RRRotation(node);
+    // RL Rotation
+    else if(bf == -2 && BalanceFactor(node->rc) > 0)
+        RLRotation(node);
+    return node;
+}
 
 template <class T>
 int AVL<T>::GetHeight(AVLNode* node) {
@@ -526,7 +587,7 @@ void AVL<T>::PrintInorder(AVLNode* node) {
 //        / \                         /     \  
 //      Al   B      ==>             A       B
 //          / \                    / \     /  \  
-//        C   Br                  Al  Cl  Cr  Br
+//         C   Br                 Al  Cl   Cr  Br
 //       / \
 //     Cl  Cr
 template <class T>

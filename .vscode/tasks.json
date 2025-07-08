@@ -130,11 +130,33 @@
       "problemMatcher": [
         "$gcc"
       ],
+      "group": "build",
+      "detail": "Build Trees program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Heap: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Heap",
+        "${workspaceFolder}/Heap/ADT.cpp",
+        "${workspaceFolder}/Heap/main.cpp",
+        "-o",
+        "${workspaceFolder}/Heap/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Heap"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build Trees program"
+      "detail": "Build Heap program"
     }
   ]
 }
