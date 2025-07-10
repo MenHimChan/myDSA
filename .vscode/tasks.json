@@ -152,11 +152,33 @@
       "problemMatcher": [
         "$gcc"
       ],
+      "group": "build",
+      "detail": "Build Heap program"
+    },
+    {
+      "type": "cppbuild",
+      "label": "Sort: g++ build all files",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-fdiagnostics-color=always",
+        "-g",
+        "-I${workspaceFolder}/Sort",
+        "${workspaceFolder}/Sort/ADT.cpp",
+        "${workspaceFolder}/Sort/main.cpp",
+        "-o",
+        "${workspaceFolder}/Sort/program"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/Sort"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build Heap program"
+      "detail": "Build Sort program"
     }
   ]
 }

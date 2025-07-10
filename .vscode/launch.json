@@ -147,6 +147,27 @@
       ],
       "preLaunchTask": "Heap: g++ build all files",
       "miDebuggerPath": "/usr/bin/gdb"
-    }
+    },
+    {
+      "name": "Debug Sort Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Sort/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Sort",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Sort: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
   ]
 }

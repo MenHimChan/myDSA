@@ -8,6 +8,10 @@
 #define MAX_HEAP_SIZE 1000
 using namespace std;
 
+int arr_rchild_idx(int i, int arr_size);
+int arr_lchild_idx(int i, int arr_size);
+int arr_parent_idx(int i, int arr_size);
+
 template <class T>
 class MaxHeap {
 private:
@@ -16,11 +20,12 @@ private:
     int parent_idx(int i);          // 求索引为i的节点的父节点的索引
     int lchild_idx(int i);
     int rchild_idx(int i);
-    void swap(T* a, T* b);
+    static void swap(T* a, T* b);
+    static void Heapify(T* arr, int arrlen, int i);
 
 public:
     MaxHeap() : size(0) {}
-    // ~MaxHeap();                  //  data, size都不是用动态分配的内存，不需要手动释放。
+    // ~MaxHeap();                  // data, size都不是用动态分配的内存，不需要手动释放。
     void Insert(T key);
     void Create();
     void Display();
@@ -28,11 +33,57 @@ public:
     T pop();
     int GetSize() {return this->size;}
     static void HeapSort(T* arr, int arrlen);
+    static void HeapifyArray(T* arr, int arrlen);       // 将arr数组堆化
 };
 
 // cin >> overload for MaxHeap Class
 template <class T>
 std::istream& operator>>(std::istream& in, MaxHeap<T>& heap);
+
+template <class T>
+void MaxHeap<T>::HeapifyArray(T* arr, int arrlen) {
+    int start = arrlen / 2 - 1;
+    for(int i = start; i >= 0; i--) 
+        Heapify(arr, arrlen, i);
+}
+
+// heapify an array
+template <class T>
+void MaxHeap<T>::Heapify(T* arr, int arrlen, int i) {
+    int curr_idx = i;
+    int lc_idx = arr_lchild_idx(curr_idx, arrlen);
+    int rc_idx = arr_rchild_idx(curr_idx, arrlen);
+
+    // has both left and right child
+    if(lc_idx != -1 && rc_idx != -1) {
+        // curr >= lchild and rchild
+        if(arr[curr_idx] >= arr[rc_idx] && arr[curr_idx] >= arr[lc_idx]) return;
+        // curr < lchild or curr < rchild
+        // pick the larger child to swap with curr
+        else if(arr[curr_idx] < arr[rc_idx] || arr[curr_idx] < arr[lc_idx]) {
+            if(arr[rc_idx] < arr[lc_idx]) {
+                swap(&arr[curr_idx], &arr[lc_idx]);
+                Heapify(arr, arrlen, lc_idx);
+            }
+            else {
+                swap(&arr[curr_idx], &arr[rc_idx]);
+                Heapify(arr, arrlen, rc_idx);
+            }
+        }
+    }
+    // has only 1 child, it must be lchild
+    else if(lc_idx != -1 && rc_idx == -1) {
+        if(arr[lc_idx] <= arr[curr_idx]) return;
+        else {
+            swap(&arr[lc_idx], &arr[curr_idx]);
+            Heapify(arr, arrlen, lc_idx);
+        }
+    }
+    // has no child, leaf node, return
+    else
+        return;
+}
+
 
 template <class T>
 void MaxHeap<T>::HeapSort(T* arr, int arrlen) {
@@ -174,6 +225,5 @@ void MaxHeap<T>::Create() {
         cin >> x;
     }
 }
-
 
 #endif
