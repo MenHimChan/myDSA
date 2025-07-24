@@ -6,6 +6,8 @@
 #define __ADT__H__
 
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 template <class T>
@@ -17,7 +19,41 @@ public:
     static void BubbleSort(T* arr, int len);
     static void InsertionSort(T* arr, int len);
     static void SelectionSort(T* arr, int len);
+    static void QuickSort(T* arr, int len);
 };
+
+// arr数组中任何一个值作为pivot都不影响结果的正确性
+// 所以pivot最好是随机取，否则万一输入的数列本身就是有序的造成退化
+template <class T>
+void Cmp_Sort<T>::QuickSort(T* arr, int len) {
+    if(len <= 1) return;
+    int pivot_idx = rand() % len;   // 取0~len - 1为索引的任意一个值作为pivot
+    T pivot = arr[pivot_idx];
+    int left = 0, right = len-1, vac = pivot_idx;
+    while(left != right) {
+        while(left != right) {
+            if(arr[right] < pivot) {
+                arr[vac] = arr[right];
+                vac = right;
+                break;
+            }
+            else
+                right--;
+        }
+        while(left != right) {
+            if(arr[left] > pivot) {
+                arr[vac] = arr[left];
+                vac = left;
+                break;
+            } 
+            else 
+                left++;
+        }
+    }
+    arr[vac] = pivot;
+    QuickSort(arr, vac);                         // left interval, idx from (0 ~ vac - 1)
+    QuickSort(arr + vac + 1, len - vac - 1);     // right interval, idx from (vac + 1 ~ len - 1)
+}
 
 template <class T>
 void Cmp_Sort<T>::SelectionSort(T* arr, int len) {
