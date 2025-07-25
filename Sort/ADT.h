@@ -14,13 +14,44 @@ template <class T>
 class Cmp_Sort {
 private:
     static void swap(T* a, T* b);
+    static void SortByMergeTwoSortedParts(T* arr, int beg_idx, int split_idx, int end_idx);
 public:
     static void PrintArray(T* arr, int len);
     static void BubbleSort(T* arr, int len);
     static void InsertionSort(T* arr, int len);
     static void SelectionSort(T* arr, int len);
     static void QuickSort(T* arr, int len);
+    static void MergeSort(T* arr, int low, int high);
 };
+
+template <class T>
+void Cmp_Sort<T>::MergeSort(T* arr, int low, int high) {
+    if(low < high) {
+        int mid = (low + high) / 2;
+        MergeSort(arr, low, mid);
+        MergeSort(arr, mid+1, high);
+        SortByMergeTwoSortedParts(arr, low, mid, high);
+    }
+}
+
+template <class T>
+void Cmp_Sort<T>::SortByMergeTwoSortedParts(T* arr, int beg_idx, int split_idx, int end_idx) {
+    int low = beg_idx, high = split_idx + 1, k = 0;         // low:  数组1起始索引   high：数组2起始索引   k=0
+    int len = end_idx - beg_idx + 1;                        // 区间长度
+    T* arr_sorted = new int[len];                         // 开辟新数组存放排序完成的结果
+    while(low <= split_idx && high <= end_idx) {
+        while(low <= split_idx && arr[low] <= arr[high])
+            arr_sorted[k++] = arr[low++];
+        while(high <= end_idx && arr[high] <= arr[low])
+            arr_sorted[k++] = arr[high++];
+    }
+    while(low <= split_idx)
+        arr_sorted[k++] = arr[low++];
+    while(high <= end_idx)
+        arr_sorted[k++] = arr[high++];
+    for(int i = 0; i < len; i++) arr[i + beg_idx] = arr_sorted[i];
+    delete[] arr_sorted;
+}
 
 // arr数组中任何一个值作为pivot都不影响结果的正确性
 // 所以pivot最好是随机取，否则万一输入的数列本身就是有序的造成退化
