@@ -8,6 +8,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 template <class T>
@@ -100,13 +102,13 @@ void Cmp_Sort<T>::SelectionSort(T* arr, int len) {
 template <class T>
 void Cmp_Sort<T>::InsertionSort(T* arr, int len) {
     for(int i = 1; i < len; i++) {
-        T tmp = arr[i];             // 无序区第一个元素，待插入的元素
+        T toInsert = arr[i];             // 无序区第一个元素，待插入的元素
         int j = i - 1;              // 有序区最后一个元素（最大元素）索引
-        while(j >= 0 && arr[j] > tmp) {
+        while(j >= 0 && arr[j] > toInsert) {
             arr[j+1] = arr[j];      // rightshirft
             j--;
         }
-        arr[j+1] = tmp;
+        arr[j+1] = toInsert;
     }
 }
 
@@ -141,22 +143,123 @@ void Cmp_Sort<T>::BubbleSort(T* arr, int len) {
     }
 }
 
+template <class T>
+class Idx_Sort {
+private:
+    struct Node{
+        T data;
+        Node* next;
+    };
+    static T GetMaxVal(T* arr, int len);
+    static T GetMinVal(T* arr, int len);
+public:
+    static void CountingSort(T* arr, int len);
+    static void CountingSort_LinkedList(T* arr, int len);
+    static void BucketSort(T* arr, int len);
+};
 
+template <class T>
+void Idx_Sort<T>::BucketSort(T* arr, int len) {
+    T minval = GetMinVal(arr, len), maxval = GetMaxVal(arr, len);
+    T interval_len = maxval - minval;
+    int bucket_num = len;                                           // 桶数等于数组长度，平均每个桶装一个数
+    vector<vector<T>> buckets(bucket_num);
 
+    // 数组元素入桶
+    for(int i = 0; i < len; i++) {
+        int bucket_idx = (arr[i] - minval) * 1.0 / (interval_len + 1) * bucket_num;
+        // cout << "i: " << i << " arr[i]: " << arr[i] << " bucket_idx : " << bucket_idx << endl;
+        buckets[bucket_idx].push_back(arr[i]);
+    }
 
+    // 对每个桶中的元素排序
+    for(int i = 0; i < bucket_num; i++) 
+        sort(buckets[i].begin(), buckets[i].end());
 
+    // 写回原数组
+    int k = 0;
+    for(int i = 0; i < bucket_num; i++) 
+        for(auto it = buckets[i].begin(); it != buckets[i].end(); it++)
+            arr[k++] = *it;
+}
 
+template <class T>
+void Idx_Sort<T>::CountingSort_LinkedList(T* arr, int len) {
+    T maxval = GetMaxVal(arr, len);
+    int k = 0;
+    vector<Node*> vec(maxval+1, nullptr);
+    for(int i = 0; i < len; i++) {
+        // 首次插入
+        if(vec[arr[i]] == nullptr) {
+            vec[arr[i]] = new Node{arr[i], nullptr};
+        }
+        else {
+            Node* newnode = new Node{arr[i], nullptr};
+            Node* p = vec[arr[i]];
+            while(p->next != nullptr) p = p->next;
+            p->next = newnode;
+        }
+    }
+    for(auto it = vec.begin(); it != vec.end(); it++) {
+        Node* p = *it;
+        while(p != nullptr) {
+            arr[k++] = p->data;
+            p = p->next;
+        }
+    }
+    // delete Node
+    for(auto it = vec.begin(); it != vec.end(); it++) {
+        Node* p = *it;
+        while(p != nullptr) {
+            Node* tmp = p;
+            p = p->next;
+            delete tmp;
+        }
+    }
+}
 
+template <class T>
+T Idx_Sort<T>::GetMinVal(T* arr, int len) {
+    T minval = arr[0];
+    for(int i = 0; i < len; i++) 
+        if(minval > arr[i])
+            minval = arr[i];
+    return minval;
+}
 
+template <class T>
+T Idx_Sort<T>::GetMaxVal(T* arr, int len) {
+    T maxval = arr[0];
+    for(int i = 0; i < len; i++) 
+        if(maxval < arr[i])
+            maxval = arr[i];
+    return maxval;
+}
 
-
-
-
-
-
-
-
-
+template <class T>
+void Idx_Sort<T>::CountingSort(T* arr, int len) {
+    T minval = GetMinVal(arr, len);
+    bool hasNegatvive = false;
+    if(minval < 0) {
+        for(int i = 0; i < len; i++)
+            arr[i] += minval*(-1);
+        hasNegatvive = true;
+    }
+    T maxval = GetMaxVal(arr, len);
+    T aid[maxval + 1] = {};
+    int k = 0;
+    for(int i = 0; i < len; i++)        // 统计原始数组中每个元素出现的次数
+        aid[arr[i]]++;
+    for(int i = 0; i <= maxval; i++) {  // 遍历aid数组，对arr进行重新排序
+        while(aid[i] != 0) {
+            arr[k++] = i;
+            aid[i]--;
+        }
+    }
+    if(hasNegatvive)
+        for(int i = 0; i < len; i++)
+            arr[i] += minval;
+}
 
 
 

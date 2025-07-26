@@ -141,10 +141,31 @@ int main() {
 
     // Merge Sort Test  归并排序
     // int arr[] = {5, 2, 8, 3, 1, 7};         // 普通乱序
-    int arr[] = {3, 3, 2, 1, 2, 3};            // 有重复元素
-    // int arr[] = {1, 2, 3, 4, 5, 6};         // 已有序
-    int arrlen = sizeof(arr) / sizeof(*arr);
-    Cmp_Sort<int>::MergeSort(arr, 0, arrlen-1);
-    for(int i = 0; i < arrlen; i++) 
+    // int arr[] = {3, 3, 2, 1, 2, 3};            // 有重复元素
+    // // int arr[] = {1, 2, 3, 4, 5, 6};         // 已有序
+    // int arrlen = sizeof(arr) / sizeof(*arr);
+    // Cmp_Sort<int>::MergeSort(arr, 0, arrlen-1);
+    // for(int i = 0; i < arrlen; i++) 
+    //     cout << arr[i] << ' ';
+
+    // Counting Sort 计数排序
+    // int arr[] = {4, 2, 2, 8, 3, 3, 1};               // 有重复元素，范围小
+    // int arr[] = {0, 1, 2, 3, 4, 5};                  // 已有序
+    // int arr[] = {5, 4, 3, 2, 1, 0};                  // 逆序
+    // int arr[] = {7, 7, 7, 7, 7};  
+    // int arr[] = {-3, -1, -2, 0, 2, 1, -1, 2, 0, -3};    // 有负数
+    // int len = sizeof(arr) / sizeof(*arr);
+    // Idx_Sort<int>::CountingSort(arr, len);
+    // for(int i = 0; i < len; i++)
+    //     cout << arr[i] << ' ';
+
+    // Bucket Sort 桶排序
+    // int arr[] = {5, 4, 3, 2, 1, 0};                  // 逆序
+    // int arr[] = {4, 2, 2, 8, 3, 3, 1};               // 有重复元素，范围小
+    int arr[] = {5, 2, 8, 3, 1, 7};
+
+    int len = sizeof(arr) / sizeof(*arr);
+    Idx_Sort<int>::BucketSort(arr, len);
+    for(int i = 0; i < len; i++)
         cout << arr[i] << ' ';
 }
