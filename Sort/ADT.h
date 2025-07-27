@@ -10,6 +10,7 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <queue>
 using namespace std;
 
 template <class T>
@@ -24,7 +25,29 @@ public:
     static void SelectionSort(T* arr, int len);
     static void QuickSort(T* arr, int len);
     static void MergeSort(T* arr, int low, int high);
+    static void ShellSort(T* arr, int len);
 };
+
+template <class T>
+void Cmp_Sort<T>::ShellSort(T* arr, int len) {
+    for(int gap = len/2; gap != 1; gap /= 2) {
+        int i = 0;                                  // start idx
+        do {
+            vector<T> vec;
+            // 将分组内的所有元素装入vector等待排序
+            for(int j = i; j < len; j+=gap) vec.push_back(arr[j]);
+
+            // 本组只有一个元素，不需要排序，说明所有分组已处理完，结束本轮gap的分组循环
+            if(vec.size() == 1) break;        
+            
+            sort(vec.begin(), vec.end());
+            auto it = vec.begin();
+            for(int j = i; j < len; j+=gap) arr[j] = *(it++);
+        }while(i++);
+    }
+    // 最后一轮gap = 1，直接调用插入排序
+    InsertionSort(arr, len);
+}
 
 template <class T>
 void Cmp_Sort<T>::MergeSort(T* arr, int low, int high) {
@@ -156,7 +179,41 @@ public:
     static void CountingSort(T* arr, int len);
     static void CountingSort_LinkedList(T* arr, int len);
     static void BucketSort(T* arr, int len);
+    static void RadixSort(T* arr, int len); 
 };
+
+template <class T>
+void Idx_Sort<T>::RadixSort(T* arr, int len) {
+    T mn = GetMinVal(arr, len), mx= GetMaxVal(arr, len);
+    vector<queue<T>> vec(10);                   // 十个基数，0~9
+    int round = 0;
+    bool hasnagative = false;
+    if(mn < 0) {
+        for(int i = 0; i < len; i++) 
+            arr[i] += mn*(-1);
+        hasnagative = true;
+    }
+    while(mx != 0) {
+        mx /= 10;
+        round++;
+    }
+    for(int i = 0, exp = 1; i < round; i++, exp*=10) {
+        // 遍历数组，数组元素 -> vector
+        for(int j = 0; j < len; j++) {
+            T radix = (arr[j] / exp) % 10;
+            vec[radix].push(arr[j]);
+        }
+        // 遍历vector，vector 写回数组
+        for(int j = 0, k = 0; j < 10; j++) {
+            while(!vec[j].empty()) {
+                arr[k++] = vec[j].front();
+                vec[j].pop();
+            }
+        }
+    }
+    if(hasnagative)
+        for(int i = 0; i < len; i++) arr[i] += mn;
+}
 
 template <class T>
 void Idx_Sort<T>::BucketSort(T* arr, int len) {

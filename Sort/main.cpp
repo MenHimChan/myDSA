@@ -162,10 +162,30 @@ int main() {
     // Bucket Sort 桶排序
     // int arr[] = {5, 4, 3, 2, 1, 0};                  // 逆序
     // int arr[] = {4, 2, 2, 8, 3, 3, 1};               // 有重复元素，范围小
-    int arr[] = {5, 2, 8, 3, 1, 7};
+    // int arr[] = {5, 2, 8, 3, 1, 7};
+    // int arr[] = {-3, -1, -2, 0, 2, 1, -1, 2, 0, -3};
+    // // double arr[] = {0.1, 0.5, 0.3, 0.9, 0.2};
 
+    // int len = sizeof(arr) / sizeof(*arr);
+    // Idx_Sort<int>::BucketSort(arr, len);
+    // for(int i = 0; i < len; i++)
+    //     cout << arr[i] << ' ';
+
+    // Radix Sort 基数排序
+    // int arr[] = {51, 4, 3, 2, 1, 100};
+    // int arr[] = {-5, -10, 0, -3, 8, 5, -1, 10};
+    // int arr[] = {7, 7, 7, 7, 7};
+    // int arr[] = {6};
+    // int arr[] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
+    // int len = sizeof(arr) / sizeof(*arr);
+    // Idx_Sort<int>::RadixSort(arr, len);
+    // for(int i = 0; i < len; i++)
+    //     cout << arr[i] << ' ';
+
+    // Shell Sort 希尔排序
+    int arr[] = {5, 2, 8, 3, 1, 7};
     int len = sizeof(arr) / sizeof(*arr);
-    Idx_Sort<int>::BucketSort(arr, len);
+    Cmp_Sort<int>::ShellSort(arr, len);
     for(int i = 0; i < len; i++)
         cout << arr[i] << ' ';
 }
