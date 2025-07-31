@@ -169,5 +169,26 @@
       "preLaunchTask": "Sort: g++ build all files",
       "miDebuggerPath": "/usr/bin/gdb"
     },
+    {
+      "name": "Debug Hashing Program",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/Hashing/program",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/Hashing",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Hashing: g++ build all files",
+      "miDebuggerPath": "/usr/bin/gdb"
+    },
   ]
 }
