@@ -33,7 +33,7 @@ private:
     vector<Node*> vec_opening;              // 适用于opening hashing，即chaining
     vector<T> vec_closing;                  // 适用于closing hashing
     int hash_fun(const T& key) const;       // 哈希函数，求哈希表的下表
-    int GetMaxPrimeLE(int num) const;       // 求小于<= key_len的最大质数
+    int GetMaxPrimeLE(int num) const;       // 求小于 <= key_len的最大质数
 
 public:
     HashTable(int keysnum, AntiHashCollusionType antitype) : 
