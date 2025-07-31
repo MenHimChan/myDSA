@@ -13,6 +13,7 @@ int main() {
     HashTable<int> ht(len, Chaining);
     ht.Create(arr, len);
     ht.Display();
+    ht.priv();
 
     // .Search() test, using keys to search in the hashtable
     // cout << "ht.Search(7) : " << ht.Search(7) << endl;
@@ -40,5 +41,6 @@ int main() {
     cout << "ht.Search(31) : " << ht.Search(31) << endl;
     cout << "ht.Search(8) : " << ht.Search(8) << endl;
     ht.Display();
+    ht.priv();
 }
 

@@ -5,7 +5,6 @@
 #ifndef __ADT__H__
 #define __ADT__H__
 
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -32,7 +31,7 @@ private:
     AntiHashCollusionType AntiColluType;    // 防止冲突的类型
     vector<Node*> vec_opening;              // 适用于opening hashing，即chaining
     vector<T> vec_closing;                  // 适用于closing hashing
-    int hash_fun(const T& key) const;       // 哈希函数，求哈希表的下表
+    int hash_fun(const T& key) const;       // 哈希函数，输入key求得该key在哈希表中的下表
     int GetMaxPrimeLE(int num) const;       // 求小于 <= key_len的最大质数
 
 public:
