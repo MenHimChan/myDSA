@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 // 枚举成员本质是整型常量。
 enum AntiHashCollusionType {
     Chaining,                           // 链地址法
@@ -21,6 +22,9 @@ enum AntiHashCollusionType {
 template <class T>
 class HashTable {
 private:
+    const T EMPTY = std::numeric_limits<T>::min(); // 空值
+    const T DELETED = std::numeric_limits<T>::max(); // 删除值
+    // 链地址法的结点结构体
     struct Node{
         T data;
         Node* next;
@@ -44,7 +48,7 @@ public:
             if(AntiColluType == Chaining) 
                 vec_opening.resize(size);
             else if(AntiColluType == LinearProbe)
-                vec_closing.resize(size, std::numeric_limits<T>::min());
+                vec_closing.resize(size, EMPTY);
         }
     ~HashTable();
     void Create(T* arr, int len);
@@ -96,20 +100,20 @@ void HashTable<T>::Delete(T key) {
         // 算哈希地址
         int idx = hash_fun(key);
         if(vec_closing[idx] == key) {                // 直接在当前位置找到
-            vec_closing[idx] = numeric_limits<T>::min(); // 置空
+            vec_closing[idx] = DELETED;              // 置为删除值
             nElems--;
             return;
         }
         else {
             int i = idx + 1;
-            while(vec_closing[i] != numeric_limits<T>::min()) {
+            while(vec_closing[i] != EMPTY) {    
+                if(i == size) i = 0;                 // 环形探测
                 if(vec_closing[i] == key) {          // 在i位置找到
-                    vec_closing[i] = numeric_limits<T>::min(); // 置空
+                    vec_closing[i] = DELETED;        // 置为删除值
                     nElems--;
                     return;
                 }
                 i++;
-                if(i == size) i = 0;                 // 环形探测
             }
             cout << "Key : " << key << "is not exist in the hashtable !" << endl; // 没查找到
         }
@@ -181,7 +185,7 @@ void HashTable<T>::ResizeAndReHash() {
 template <class T>
 void HashTable<T>::Insert(T key) {
     if(AntiColluType == Chaining) {
-        if((double)nElems / size > load_factor) ResizeAndReHash();
+        if((double)(nElems + 1) / size > load_factor) ResizeAndReHash();
         int idx = hash_fun(key);
         // 头插法
         Node* newnode = new Node{key, nullptr};
@@ -190,14 +194,16 @@ void HashTable<T>::Insert(T key) {
         this->nElems++;
     }
     else if(AntiColluType == LinearProbe) {
-        if((double)nElems / size > load_factor) ResizeAndReHash();
+        if((double)(nElems + 1) / size > load_factor) ResizeAndReHash();
         int idx = hash_fun(key);
-        if(vec_closing[idx] == numeric_limits<T>::min()) vec_closing[idx] = key;
-        else {  // 当前位置非空
+        if(vec_closing[idx] == EMPTY || vec_closing[idx] == DELETED) // 当前位置为空或被删除
+            vec_closing[idx] = key;
+        else {                                                       // 当前位置非空
             int j = idx + 1;
-            while(vec_closing[j] != numeric_limits<T>::min()) {
+            // 寻找idx之后的第一个空位置或者删除位置
+            while(vec_closing[j] != EMPTY && vec_closing[j] != DELETED) { // 线性探测
+                if(j == size) j = 0;                                      // 环形探测
                 j++;
-                if(j == size) j = 0; // 环形探测
             }
             vec_closing[j] = key;
         }
@@ -219,13 +225,13 @@ T HashTable<T>::Search(T key) {
     }
     else if(AntiColluType == LinearProbe) {
         int idx = hash_fun(key);
-        if(vec_closing[idx] == key) return key;
-        else {
+        if(vec_closing[idx] == key) return key;         // 直接在当前位置找到
+        else {              
             int i = idx + 1;
-            while(vec_closing[i] != numeric_limits<T>::min()) {
+            while(vec_closing[i] != EMPTY) {
+                if(i == size) i = 0;                     // 环形探测
                 if(key == vec_closing[i]) return key;
                 i++;
-                if(i == size) i = 0;
             }
             cout << "Key not found in the hash table !" << endl;
             return T();
@@ -257,7 +263,8 @@ void HashTable<T>::Display(void) {
         cout << "------------ Printing the Hashtable ------------" << endl;
         for(int i = 0; i < size; i++) {
             cout << "HashTable" << "[ " <<  i << " ]" << ':' << " ";
-            if(vec_closing[i] == numeric_limits<T>::min()) cout << "Empty";
+            if(vec_closing[i] == EMPTY) cout << "Empty";
+            else if(vec_closing[i] == DELETED) cout << "Deleted";
             else cout << vec_closing[i];
             cout << endl;
         }

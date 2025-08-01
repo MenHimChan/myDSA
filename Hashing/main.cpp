@@ -75,6 +75,15 @@ int main() {
     ht.Display();
     ht.priv();
 
+    // Search test: 判断能否越过DELETED值找到key
+    // 需要用到的key：3, 6, 9, 12, 15
+    // ht.Delete(6); // 删除中间元素
+    // ht.Display();
+    // ht.priv();
+    // // Display test
+    // cout << "ht.Search(9) : " << ht.Search(9) << endl; // 能查找到9
+    // return 0;
+
     // Search test
     // cout << "ht.Search(3) : " << ht.Search(3) << endl;
     // cout << "ht.Search(6) : " << ht.Search(6) << endl;
