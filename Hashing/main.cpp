@@ -65,15 +65,15 @@ int main() {
     // ht.priv();
 
     // ======================= LinearProbe Hashtable Test =======================
-    int arr[] = {15, 23, 7, 8, 42, 31, 56, 77, 89, 100};
+    // int arr[] = {15, 23, 7, 8, 42, 31, 56, 77, 89, 100};
     // int arr[] = {3, 6, 9, 12, 15};                               // 让它们哈希到同一个位置
-    int len = sizeof(arr) / sizeof(*arr);   
+    // int len = sizeof(arr) / sizeof(*arr);   
 
     // create test
-    HashTable<int> ht(len, LinearProbe);
-    ht.Create(arr, len);
-    ht.Display();
-    ht.priv();
+    // HashTable<int> ht(len, LinearProbe);
+    // ht.Create(arr, len);
+    // ht.Display();
+    // ht.priv();
 
     // Search test: 判断能否越过DELETED值找到key
     // 需要用到的key：3, 6, 9, 12, 15
@@ -94,20 +94,50 @@ int main() {
 
     // Insert and delete test
     // First Insert() test
-    ht.Insert(10000);
-    ht.Insert(29999);               // 实测在上述基础上插入两个key就会触发扩容
-    cout << "ht.Search(10000) : " << ht.Search(10000) << endl;
-    cout << "ht.Search(77) : " << ht.Search(77) << endl;
-    cout << "ht.Search(100) : " << ht.Search(100) << endl;
-    cout << "ht.Search(31) : " << ht.Search(31) << endl;
-    cout << "ht.Search(8) : " << ht.Search(8) << endl;
+    // ht.Insert(10000);
+    // ht.Insert(29999);               // 实测在上述基础上插入两个key就会触发扩容
+    // cout << "ht.Search(10000) : " << ht.Search(10000) << endl;
+    // cout << "ht.Search(77) : " << ht.Search(77) << endl;
+    // cout << "ht.Search(100) : " << ht.Search(100) << endl;
+    // cout << "ht.Search(31) : " << ht.Search(31) << endl;
+    // cout << "ht.Search(8) : " << ht.Search(8) << endl;
+    // ht.Display();
+    // ht.priv();
+
+    // delete test
+    // ht.Delete(77);
+    // ht.Delete(31);
+    // ht.Display();
+    // ht.priv();
+
+    // ======================= QuadraticProbe Hashtable Test =======================
+    int arr[] = {12, 23, 34, 45};                       // 这些数 key % 11 都等于1，会发生多次冲突
+    int len = sizeof(arr) / sizeof(*arr);
+
+    // create() test
+    HashTable<int> ht(len, QuadraticProbe);
+    ht.Create(arr, len);
     ht.Display();
     ht.priv();
 
-    // delete test
-    ht.Delete(77);
-    ht.Delete(31);
+    // delete() test
+    // ht.Delete(34);
+    // ht.Display();
+    // ht.priv();
+
+    // Search() test
+    // cout << "ht.Search(45) : " << ht.Search(45) << endl;
+    // cout << "ht.Search(199) : " << ht.Search(199) << endl;
+    // cout << "ht.Search(14) : " << ht.Search(14) << endl;
+
+    // Insert() test
+    ht.Insert(56);
     ht.Display();
     ht.priv();
+
+    ht.Insert(67);
+    ht.Display();
+    ht.priv();
+
 }
 

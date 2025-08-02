@@ -126,9 +126,9 @@ template <class T>
 void Cmp_Sort<T>::InsertionSort(T* arr, int len) {
     for(int i = 1; i < len; i++) {
         T toInsert = arr[i];             // 无序区第一个元素，待插入的元素
-        int j = i - 1;              // 有序区最后一个元素（最大元素）索引
+        int j = i - 1;                   // 有序区最后一个元素（最大元素）索引
         while(j >= 0 && arr[j] > toInsert) {
-            arr[j+1] = arr[j];      // rightshirft
+            arr[j+1] = arr[j];           // rightshirft
             j--;
         }
         arr[j+1] = toInsert;

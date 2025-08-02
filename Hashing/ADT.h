@@ -17,12 +17,13 @@ using namespace std;
 enum AntiHashCollusionType {
     Chaining,                           // 链地址法
     LinearProbe,                        // 线性探测法
+    QuadraticProbe,                     // 二次探测法
 };
 
 template <class T>
 class HashTable {
 private:
-    const T EMPTY = std::numeric_limits<T>::min(); // 空值
+    const T EMPTY = std::numeric_limits<T>::min();   // 空值
     const T DELETED = std::numeric_limits<T>::max(); // 删除值
     // 链地址法的结点结构体
     struct Node{
@@ -38,18 +39,21 @@ private:
     vector<T> vec_closing;                  // 适用于closing hashing
     int hash_fun(const T& key) const;       // 哈希函数，输入key求得该key在哈希表中的下表
     int GetMaxPrimeLE(int num) const;       // 求小于 <= key_len的最大质数
+    int GetMin4k3PrimeGE(int num) const;    // 求大于等于num的第一个4k+3质数
 
 public:
-    HashTable(int keysnum, AntiHashCollusionType antitype) : 
-        size((int)(ceil(keysnum / load_factor))), 
-        prime(GetMaxPrimeLE(size)), 
-        AntiColluType(antitype),
-        nElems(0) {
-            if(AntiColluType == Chaining) 
-                vec_opening.resize(size);
-            else if(AntiColluType == LinearProbe)
-                vec_closing.resize(size, EMPTY);
+    HashTable(int keysnum, AntiHashCollusionType antitype) : size((int)(ceil(keysnum / load_factor))), prime(GetMaxPrimeLE(size)), AntiColluType(antitype), nElems(0) {
+        if(AntiColluType == Chaining) 
+            vec_opening.resize(size);
+        else if(AntiColluType == LinearProbe)
+            vec_closing.resize(size, EMPTY);
+        else if(AntiColluType == QuadraticProbe) {
+            load_factor = 0.5;                      // 二次探测法装填因子
+            size = GetMin4k3PrimeGE((int)(ceil(keysnum / load_factor)));
+            prime = GetMaxPrimeLE(size);
+            vec_closing.resize(size, EMPTY);
         }
+    }
     ~HashTable();
     void Create(T* arr, int len);
     void priv(void);
@@ -59,6 +63,23 @@ public:
     void Delete(T key);
     void ResizeAndReHash();
 };
+
+template <class T>
+int HashTable<T>::GetMin4k3PrimeGE(int num) const {
+    auto isPrime = [](int n) {
+        if(n < 2) return false;
+        for(int i = 2; i * i <= n; ++i)
+            if(n % i == 0) return false;
+        return true;
+    };
+    int candidate = num;
+    while (true) {
+        if (candidate % 4 == 3 && isPrime(candidate)) {
+            return candidate;
+        }
+        candidate++;
+    }
+}
 
 template <class T>
 void HashTable<T>::Delete(T key) {
@@ -118,6 +139,29 @@ void HashTable<T>::Delete(T key) {
             cout << "Key : " << key << "is not exist in the hashtable !" << endl; // 没查找到
         }
     }
+    else if(AntiColluType == QuadraticProbe) {
+        // Derive hash address
+        int idx = hash_fun(key);
+        // if found at idx
+        if(vec_closing[idx] == key) {
+            vec_closing[idx] = DELETED;
+            nElems--;
+            return;
+        }
+        else {
+            for(int sign=1, base=1, offset=1, idx_offset=(idx+offset+size) % size; 
+                vec_closing[idx_offset] != EMPTY;                                   // 遇到empty就停止，说明没查到
+                sign*=-1, offset=base*base*sign, idx_offset=(idx+offset+size) % size) {
+                if(vec_closing[idx_offset] == key) {
+                    vec_closing[idx_offset] = DELETED;
+                    nElems--;
+                    return;
+                }
+                if(offset < 0) base++;
+            }
+            cout << "Key : " << key << " is not exist in the hashtable !" << endl; // 没查找到
+        }
+    }
 }
 
 template <class T>
@@ -158,16 +202,16 @@ void HashTable<T>::ResizeAndReHash() {
     else if(AntiColluType == LinearProbe) {
         int new_size = size * 2;
         int new_prime = GetMaxPrimeLE(new_size);        // 根据new_size计算出的最大质数
-        vector<T> new_vec_closing(new_size, std::numeric_limits<T>::min());
+        vector<T> new_vec_closing(new_size, EMPTY);     // 新哈希表
         for(int i = 0; i < size; ++i) {
-            if(vec_closing[i] != numeric_limits<T>::min()) {    // 只处理原hashtable的非空位置
+            if(vec_closing[i] != EMPTY && vec_closing[i] != DELETED) {    // 只处理原hashtable的非空位置
                 int idx = vec_closing[i] % new_prime;           
                 // 如果新hashtable当前位置为空，直接填入
-                if(new_vec_closing[idx] == numeric_limits<T>::min()) 
+                if(new_vec_closing[idx] == EMPTY) 
                     new_vec_closing[idx] = vec_closing[i];
                 else {  // 如果当前位置非空，线性探测
                     int j = idx + 1;
-                    while(new_vec_closing[j] != numeric_limits<T>::min()) {
+                    while(new_vec_closing[j] != EMPTY) {
                         j++;
                         if(j == new_size) j = 0; // 环形探测
                     }
@@ -176,6 +220,31 @@ void HashTable<T>::ResizeAndReHash() {
             }
         }
         // 用 new_vec_closing 变量覆盖 vec_closing
+        this->vec_closing = move(new_vec_closing);
+        this->size = new_size;
+        this->prime = new_prime;
+    }
+
+    else if(AntiColluType == QuadraticProbe) {
+        int new_size = GetMin4k3PrimeGE(size * 2);          // 新表长是大于size*2 的第一个4k+3质数
+        int new_prime = GetMaxPrimeLE(new_size);            // 模值是小于等于表长的最大质数
+        vector<T> new_vec_closing(new_size, EMPTY);
+        for(int i = 0; i < size; i++) {
+            if(vec_closing[i] != EMPTY && vec_closing[i] != DELETED) {      // 只存有数值的位置
+                int idx = vec_closing[i] % new_prime;                       // 先求哈希地址
+                if(new_vec_closing[idx] == EMPTY) new_vec_closing[idx] = vec_closing[i];    // 如果哈希地址下没存任何东西，直接放进去
+                else {
+                    int sign=1, base=1, offset=base*base*sign, idx_offset=(idx+offset+size)%size;   // 找到第一个empty的位置
+                    while(new_vec_closing[idx_offset] != EMPTY) {
+                        if(offset < 0) base++;
+                        sign*=-1;
+                        offset = base*base*sign;
+                        idx_offset=(idx+offset+size) % size;
+                    }
+                    new_vec_closing[idx_offset] = vec_closing[i];
+                }
+            }
+        }
         this->vec_closing = move(new_vec_closing);
         this->size = new_size;
         this->prime = new_prime;
@@ -196,8 +265,7 @@ void HashTable<T>::Insert(T key) {
     else if(AntiColluType == LinearProbe) {
         if((double)(nElems + 1) / size > load_factor) ResizeAndReHash();
         int idx = hash_fun(key);
-        if(vec_closing[idx] == EMPTY || vec_closing[idx] == DELETED) // 当前位置为空或被删除
-            vec_closing[idx] = key;
+        if(vec_closing[idx] == EMPTY || vec_closing[idx] == DELETED) vec_closing[idx] = key;    // 当前位置为空标记或者删除标记
         else {                                                       // 当前位置非空
             int j = idx + 1;
             // 寻找idx之后的第一个空位置或者删除位置
@@ -206,6 +274,22 @@ void HashTable<T>::Insert(T key) {
                 j++;
             }
             vec_closing[j] = key;
+        }
+        this->nElems++;
+    }
+    else if(AntiColluType == QuadraticProbe) {
+        if((double)(nElems + 1) / size > load_factor) ResizeAndReHash();
+        int idx = hash_fun(key);
+        if(vec_closing[idx] == EMPTY || vec_closing[idx] == DELETED) vec_closing[idx] = key;
+        else {
+            int sign=1, base=1, offset=base*base*sign, idx_offset=(idx+offset+size) % size;
+            while(vec_closing[idx_offset] != EMPTY && vec_closing[idx_offset] != DELETED) {
+                if(offset < 0) base++;
+                sign *= -1;
+                offset = base*base*sign;
+                idx_offset = (idx+offset+size) % size;
+            }
+            vec_closing[idx_offset] = key;
         }
         this->nElems++;
     }
@@ -220,7 +304,7 @@ T HashTable<T>::Search(T key) {
             if(p->data == key) return p->data;
             p = p->next;
         }
-        cout << "Key not found in the hash table !" << endl;
+        cout << "Key " << key << " not found in the hash table, return : ";
         return T();
     }
     else if(AntiColluType == LinearProbe) {
@@ -233,7 +317,22 @@ T HashTable<T>::Search(T key) {
                 if(key == vec_closing[i]) return key;
                 i++;
             }
-            cout << "Key not found in the hash table !" << endl;
+            cout << "Key " << key << " not found in the hash table, return : ";
+            return T();
+        }
+    }
+    else if(AntiColluType == QuadraticProbe) {
+        // derive hash address
+        int idx = hash_fun(key);
+        if(vec_closing[idx] == key) return key;
+        else {
+            for(int sign=1, base=1, offset=base*base*sign, idx_offset=(idx+offset+size) % size;
+                vec_closing[idx_offset] != EMPTY;
+                sign*=-1, offset=base*base*sign, idx_offset=(idx+offset+size) % size) {
+                if(vec_closing[idx_offset] == key) return key;
+                if(offset < 0) base++;
+            }
+            cout << "Key " << key << " not found in the hash table, return : ";
             return T();
         }
     }
@@ -270,6 +369,17 @@ void HashTable<T>::Display(void) {
         }
         cout << "------------ End Printing ------------" << endl;
     }
+    else if(AntiColluType == QuadraticProbe) {
+        cout << "------------ Printing the Hashtable ------------" << endl; 
+        for(int i = 0; i < size; i++) {
+            cout << "HashTable" << "[ " <<  i << " ]" << ':' << " ";
+            if(vec_closing[i] == EMPTY) cout << "Empty";
+            else if(vec_closing[i] == DELETED) cout << "Deleted";
+            else cout << vec_closing[i];
+            cout << endl;
+        }
+        cout << "------------ End Printing ------------" << endl;
+    }
 }
 
 template <class T>
@@ -285,9 +395,8 @@ HashTable<T>::~HashTable() {
             }
         }
     }
-    else if(AntiColluType == LinearProbe) {
-        return;
-    }
+    else if(AntiColluType == LinearProbe)  return;
+    else if(AntiColluType == QuadraticProbe) return; 
 }
 
 template <class T>
@@ -323,6 +432,25 @@ void HashTable<T>::Create(T* arr, int len) {
                     if(j == size) j = 0;
                 }
                 vec_closing[j] = arr[i];
+            }
+        }
+        this->nElems = len;
+    }
+    else if(AntiColluType == QuadraticProbe) {
+        for(int i = 0; i < len; i++) {
+            int idx = hash_fun(arr[i]);
+            if(vec_closing[idx] == EMPTY) vec_closing[idx] = arr[i];      // 当前位置为空，直接填入
+            else {
+                // int exp = 2;                                           // 二次探测的指数
+                for(int sign=1, base=1; ;sign*=-1) {
+                    int offset = base * base * sign;
+                    int idx_offset = (idx+offset+size) % size;            // +size是为了处理负数索引
+                    if(vec_closing[idx_offset] == EMPTY) {
+                        vec_closing[idx_offset] = arr[i];
+                        break;
+                    }
+                    if(offset < 0) base++;
+                }
             }
         }
         this->nElems = len;
